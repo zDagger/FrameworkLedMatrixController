@@ -1,6 +1,8 @@
 import serial
 import time
 import pathGen
+import snakeGame
+from PIL import Image
 #0=left, 1=right
 ports = ['com4', 'com3']
 def send_command(command_id, parameters, port, with_response=False):
@@ -26,10 +28,23 @@ def hamilton_snake():
      if n == len(snakePath):
         n = 0
      print(snakePath[n])
-     time.sleep(0.41)
+     time.sleep(0.44)
      send_command(0x11, [snakePath[n]], ports[0])
      n += 1
-hamilton_snake()
+def run_snake():
+   im = snakeGame.drawGame()
+
+   # For each column x, collect brightness bytes for y=0..8 and send them
+   for x in range(im.width):  # 0..33
+      col_bytes = [im.getpixel((x, y)) for y in range(im.height)]  # 9 values, each 0..255
+      # Stage this column (one StageCol call per column)
+   #   print(x)
+      send_command(0x07, [x]+col_bytes, ports[0])
+
+   # After staging all 34 columns, flush to show the frame
+   send_command(0x08, [], ports[0])
+
+run_snake()
 
     
 #send_command(0x10, [0], ports[0])
