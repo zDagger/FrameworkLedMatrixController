@@ -149,10 +149,10 @@ class Hamiltonian:
         print(result_str)
 
     #returns list of directions for snake where 0=up, 1=down, 2=left, 3=right
-    def getSnakePath(self):
+    def getSnakePath(self,start=[1,1]):
         path = []
         #default starting point for snake game
-        curr = [4,1]
+        curr = start
         while len(path) < self.width * self.height:
             if self.grid[curr[0], curr[1]] == From.NORTH:
                 path.append(0)

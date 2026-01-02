@@ -2,9 +2,18 @@ import serial
 import time
 import pathGen
 import snakeGame
+
 from PIL import Image
+from enum import Enum
 #0=left, 1=right
 ports = ['com4', 'com3']
+
+class directions(Enum):
+    up=0
+    down=1
+    left=2
+    right=3
+
 def send_command(command_id, parameters, port, with_response=False):
   with serial.Serial(port , 115200) as s:
       s.write([0x32, 0xAC, command_id] + parameters)
@@ -14,35 +23,31 @@ def send_command(command_id, parameters, port, with_response=False):
           return res
       
 def hamilton_snake():
-  u=0
-  d=1
-  l=2
-  r=3
-  n=0
   path=pathGen.Hamiltonian(9, 34)
+  path.generate(2500)
   snakePath=path.getSnakePath()
-  print(snakePath)
-  #print(snakePath)
-  send_command(0x10, [0], ports[0])
-  while True:
-     if n == len(snakePath):
-        n = 0
-     print(snakePath[n])
-     time.sleep(0.44)
-     send_command(0x11, [snakePath[n]], ports[0])
-     n += 1
+  path.print_path()
+  return snakePath
 def run_snake():
-   im = snakeGame.drawGame()
+   Game = snakeGame.Game(9,34)
+   n=0
+   path = hamilton_snake()
+   while True:
+      im = Game.drawGame()
+      # For each column x, collect brightness bytes for y=0..8 and send them
+      for x in range(im.width):  # 0..33
+         col_bytes = [im.getpixel((x, y)) for y in range(im.height)]  # 9 values, each 0..255
+         # Stage this column (one StageCol call per column)
+      #   print(x)
+         send_command(0x07, [x]+col_bytes, ports[0])
 
-   # For each column x, collect brightness bytes for y=0..8 and send them
-   for x in range(im.width):  # 0..33
-      col_bytes = [im.getpixel((x, y)) for y in range(im.height)]  # 9 values, each 0..255
-      # Stage this column (one StageCol call per column)
-   #   print(x)
-      send_command(0x07, [x]+col_bytes, ports[0])
-
-   # After staging all 34 columns, flush to show the frame
-   send_command(0x08, [], ports[0])
+      # After staging all 34 columns, flush to show the frame
+      send_command(0x08, [], ports[0])
+      if n == len(path):
+         n=0
+      Game.move(path[n])
+      n += 1
+      #time.sleep(0.01)
 
 run_snake()
 
