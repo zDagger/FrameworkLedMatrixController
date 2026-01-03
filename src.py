@@ -6,7 +6,7 @@ import snakeGame
 from PIL import Image
 from enum import Enum
 #0=left, 1=right
-ports = ['com4', 'com3']
+ports = ['com3', 'com5']
 
 class directions(Enum):
     up=0
@@ -39,10 +39,10 @@ def run_snake():
          col_bytes = [im.getpixel((x, y)) for y in range(im.height)]  # 9 values, each 0..255
          # Stage this column (one StageCol call per column)
       #   print(x)
-         send_command(0x07, [x]+col_bytes, ports[0])
+         send_command(0x07, [x]+col_bytes, ports[1])
 
       # After staging all 34 columns, flush to show the frame
-      send_command(0x08, [], ports[0])
+      send_command(0x08, [], ports[1])
       if n == len(path):
          n=0
       Game.move(path[n])
