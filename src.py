@@ -6,7 +6,7 @@ import snakeGame
 from PIL import Image
 from enum import Enum
 #0=left, 1=right
-ports = ['com3', 'com5']
+ports = ['com3', 'com4']
 
 class directions(Enum):
     up=0

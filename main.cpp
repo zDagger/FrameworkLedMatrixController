@@ -97,7 +97,18 @@ static const std::unordered_map<char, std::array<std::string,7>> FONT5x7 = {
     
 };
 
+enum From {
+    NOWHERE = 1,
+    NORTH = 2,
+    EAST = 3,
+    SOUTH = 4,
+    WEST = 5
+};
 
+class hamiltonianPath{
+    private:
+        
+};
 
 class randomNum{
     private:
@@ -317,7 +328,7 @@ class snakeGame{
 
 int main()
 {
-    std::string ports[2] = {"com5", "com4"};
+    std::string ports[2] = {"com3", "com4"};
     serialCommunicator snakeSerial(ports[0]);
     int width = 9;
     int height = 34;
@@ -363,7 +374,5 @@ int main()
         snakeSerial.sendMessgae(flushCols);
         Game.move(down);
     }
-    //snakeSerial.sendMessgae(pattern, example, 2);
-
     return 0 ;
 }
